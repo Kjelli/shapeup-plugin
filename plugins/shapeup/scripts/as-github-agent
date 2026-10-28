@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# Runs one command as the agent's GitHub account, leaving the user's own gh and git setup untouched.
+#
+#   as-github-agent <login> <command> [args...]
+#
+# For this command only:
+# - gh uses the token gh has stored for <login> (GH_TOKEN), whichever account is active.
+# - git authenticates to https://github.com with that token, and only there.
+# - git commits are authored and committed by <login> with its GitHub noreply address.
+#
+# The agent's account must have been signed in once with `gh auth login`; the user then switches back to their own
+# account with `gh auth switch`. gh keeps both tokens.
+set -euo pipefail
+
+if [ $# -lt 2 ]; then
+  echo "usage: as-github-agent <login> <command> [args...]" >&2
+  exit 2
+fi
+account="$1"
+shift
+
+if ! token="$(gh auth token --hostname github.com --user "$account" 2>/dev/null)" || [ -z "$token" ]; then
+  echo "as-github-agent: gh has no stored login for '$account' on github.com." >&2
+  echo "Sign it in once with 'gh auth login --hostname github.com', then switch back with 'gh auth switch'." >&2
+  exit 1
+fi
+export GH_TOKEN="$token"
+
+if ! identity="$(gh api user --jq '"\(.id) \(.login)"' 2>/dev/null)"; then
+  echo "as-github-agent: the stored token for '$account' doesn't work. Sign it in again with 'gh auth login'." >&2
+  exit 1
+fi
+read -r id login <<<"$identity"
+if [ "$login" != "$account" ]; then
+  echo "as-github-agent: the token stored for '$account' belongs to '$login'." >&2
+  exit 1
+fi
+
+email="${id}+${login}@users.noreply.github.com"
+export GIT_AUTHOR_NAME="$login" GIT_COMMITTER_NAME="$login"
+export GIT_AUTHOR_EMAIL="$email" GIT_COMMITTER_EMAIL="$email"
+
+# Replace the credential helpers for https://github.com with gh, which reads GH_TOKEN. Other hosts keep theirs.
+base="${GIT_CONFIG_COUNT:-0}"
+export "GIT_CONFIG_KEY_${base}=credential.https://github.com.helper"
+export "GIT_CONFIG_VALUE_${base}="
+export "GIT_CONFIG_KEY_$((base + 1))=credential.https://github.com.helper"
+export "GIT_CONFIG_VALUE_$((base + 1))=!gh auth git-credential"
+export GIT_CONFIG_COUNT=$((base + 2))
+
+exec "$@"
