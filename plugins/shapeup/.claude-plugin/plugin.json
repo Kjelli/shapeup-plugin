@@ -1,0 +1,16 @@
+{
+  "name": "shapeup",
+  "displayName": "ShapeUp",
+  "version": "0.1.0",
+  "description": "Run ShapeUp with agents: shape pitches with a product owner and build bets autonomously, one session at a time. Works with the tracker and code host the project is configured for.",
+  "author": {
+    "name": "Kjell Arne Hellum"
+  },
+  "keywords": [
+    "shapeup",
+    "product",
+    "agents",
+    "azure-devops"
+  ],
+  "license": "MIT"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "shapeup-plugin",
+  "description": "Run ShapeUp with Claude agents",
+  "owner": {
+    "name": "Kjell Arne Hellum"
+  },
+  "plugins": [
+    {
+      "name": "shapeup",
+      "source": "./plugins/shapeup",
+      "description": "Run ShapeUp with agents: shape pitches with a product owner and build bets autonomously, one session at a time"
+    }
+  ]
+}
