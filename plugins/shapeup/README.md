@@ -47,26 +47,34 @@ a Jira tracker would too once its adapter exists. To add one, write an adapter f
 1. Install the plugin (see the marketplace README).
 2. In the repository, run `/shapeup:init`. It asks for the tracker and code host, sets up the connection, verifies
    access and writes `.claude/shapeup.json`.
-3. Put a Definition of done in the repository's root `CLAUDE.md`. The building agent holds every slice to it.
+3. Agree on a Definition of done. `/shapeup:init` offers to shape one with you from the repository's own build and
+   test commands, and writes it to the root `CLAUDE.md`. The building agent holds every slice to it.
 4. Commit `.claude/shapeup.json`, and `.mcp.json` if it wrote one.
 
 The agent acts as the signed-in user and can never do more than they can.
 
 ### On GitHub
 
-GitHub doesn't let anyone approve their own pull request, and the agent opens pull requests as whoever `gh` is signed
-in as. So decide first who the agent is:
+GitHub doesn't let anyone approve their own pull request, so give the agent its own GitHub account: a machine account
+with write access to the repository. Shapers then approve with normal reviews.
 
-- **Its own GitHub account** (recommended): a machine account with write access to the repository. Shapers approve
-  with normal reviews. Configure `"approval": "review"`.
-- **A shaper's account**, for example on a solo project: the shaper approves by commenting `/approve`. Configure
-  `"approval": "comment"`.
+1. Install the GitHub CLI and sign in with **your own** account: `gh auth login`.
+2. Sign in the agent's account too, then switch back to yours:
 
-Before running `/shapeup:init`, the user also needs:
+   ```bash
+   gh auth login                       # log in as the agent's account
+   gh auth switch --user <your login>
+   ```
 
-1. The GitHub CLI, signed in as the agent's account: `gh auth login`, then `gh auth setup-git`.
-2. A repository with issues turned on, both merge commits and squash merges allowed, and *Automatically delete head
-   branches* turned off.
-3. At least one open milestone, which is the first cycle.
+   gh keeps both tokens. Your account stays the active one for everything you do; the building agent picks the agent's
+   token for its own commands only, through the plugin's `as-github-agent` wrapper. Its commits are authored by the
+   agent's account and pushed with its token. Your git identity and credentials aren't touched.
+3. Use an HTTPS remote (or an HTTPS push URL), so pushes can use the agent's token.
+4. Make sure the repository has issues turned on, allows both merge commits and squash merges, and has
+   *Automatically delete head branches* turned off.
+5. Create at least one open milestone: the first cycle.
+6. Run `/shapeup:init` and give the agent's login when asked. It checks all of the above and creates the labels the
+   skills use.
 
-`/shapeup:init` checks all of this and creates the labels the skills use.
+Shaping always runs as you, so bets are created and assigned by the product owner. On a solo project without a second
+account, configure `"approval": "comment"` and approve by commenting `/approve`.

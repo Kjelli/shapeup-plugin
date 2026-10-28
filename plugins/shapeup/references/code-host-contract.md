@@ -19,6 +19,13 @@ What the agent uses to reach the host, if it isn't the same as the tracker's: an
 entry `shapeup:init` can write) or a command-line tool, and how the user signs in. Also what `git push` to `origin`
 needs to work without prompting.
 
+### Acting as
+
+Optional. Whose account the agent uses. By default both skills act as the signed-in user. An adapter may let the
+building agent use its own account instead, so its work is never mixed up with a person's: then it says how the
+account is configured and gives the exact command prefix to put before every command that reaches the host, `git push` and `git commit` included.
+Shaping always acts as the product owner.
+
 ### Pull requests
 
 How to:
@@ -46,6 +53,11 @@ How to complete a pull request with:
 - a **squash merge**, keeping the source branch (the bet).
 
 And what to do if the tools can't do one of these.
+
+### Definition of done
+
+Optional. Items `shapeup:init` suggests for the Definition of done because of how this host works, such as checks
+that run on every pull request, and what in the repository shows they apply.
 
 ### Verification
 

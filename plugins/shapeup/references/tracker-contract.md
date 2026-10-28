@@ -22,6 +22,13 @@ suggest them (for example from the git remote).
 What the agent uses to reach the tracker: an MCP server (with the `.mcp.json` entry `shapeup:init` can write) or a
 command-line tool. Also what the user installs and how they sign in, and how to tell that the connection works.
 
+### Acting as
+
+Optional. Whose account the agent uses. By default both skills act as the signed-in user. An adapter may let the
+building agent use its own account instead, so its work is never mixed up with a person's: then it says how the
+account is configured and gives the exact command prefix to put before every command that reaches the service.
+Shaping always acts as the product owner.
+
 ### Scope
 
 What marks an item as belonging to this ShapeUp setup, as opposed to other work in the same tracker (for example an

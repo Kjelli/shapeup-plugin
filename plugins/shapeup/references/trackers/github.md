@@ -17,6 +17,7 @@ Meets [../tracker-contract.md](../tracker-contract.md). Below, `<owner>` and `<r
 |---|---|---|
 | `owner` | Yes | The user or organization that owns the repository holding the issues. |
 | `repo` | Yes | The repository holding the issues. Usually the same repository as the code. |
+| `account` | No | The GitHub login of the agent's own account. See "Acting as". |
 
 `shapeup:init` suggests both from a GitHub remote: `https://github.com/<owner>/<repo>.git` or
 `git@github.com:<owner>/<repo>.git`.
@@ -34,6 +35,16 @@ and repository settings, which the GitHub MCP server's tools don't all reach. No
 - Pass `--repo <owner>/<repo>` to every `gh issue` command, so the command never depends on the current directory.
 - Write bodies and comments to a file in a temporary directory and pass it with `--body-file` (or `-F body=@<file>` with
   `gh api`), never inline, so Markdown and quotes survive the shell.
+
+## Acting as
+
+- **`account` set:** the building agent acts as that account and the user's own GitHub setup is never touched. Put the
+  plugin's wrapper before every `gh` command: `bash <scripts>/as-github-agent <account> gh ...`, where `<scripts>` is
+  the plugin's scripts folder the skill names. The wrapper picks the token gh has stored for `<account>`, whichever
+  account is active, for that one command.
+- **Shaping** never uses the wrapper: the product owner creates the bet, so it runs plain `gh`, as the active account.
+- **`account` not set:** both skills run plain `gh` as the active account.
+- The **operator** is always the active account: `gh api user --jq .login` without the wrapper.
 
 ## Scope
 
@@ -116,7 +127,7 @@ The issue body, in GitHub Markdown. Keep the pitch's section headings as `##` he
 ## Changes the skills make
 
 - **Bet:** `gh issue create --repo <owner>/<repo> --title "Bet: <title>" --body-file <file> --label bet --milestone "<milestone title>" --assignee <login>`.
-  The product owner's login is `gh api user --jq .login` unless they name someone else.
+  Run it as the product owner (plain `gh`). Their login is `gh api user --jq .login` unless they name someone else.
 - **Slice:** `gh issue create` with `--label slice --label uphill` (or `downhill`), then make it a sub-issue of the bet:
   `gh api -X POST repos/<o>/<r>/issues/<bet>/sub_issues -F sub_issue_id=<slice id>`.
 - **Question:** `gh issue create` with `--label question --assignee <shaper>`, then add it as a sub-issue of the slice
@@ -156,7 +167,10 @@ issues live in a different repository from the code, write `<owner>/<repo>#<n>`.
 
 ## Verification
 
-1. `gh auth status` succeeds, and `gh api user --jq .login` gives the account the agent will act as. Report it.
+1. `gh auth status` succeeds. Report the active account (`gh api user --jq .login`): that is who shapes. If `account` is
+   set, `bash <scripts>/as-github-agent <account> gh api user --jq .login` prints `<account>`, and it differs from the
+   active account. If the active account *is* the agent's, the user signed it in last: tell them to run
+   `gh auth switch --user <their own login>`.
 2. `gh api repos/<o>/<r> --jq '{full_name, has_issues, visibility}'`: the repository is reachable and `has_issues` is
    true.
 3. Sub-issues are available: `gh api repos/<o>/<r>/issues/<any issue>/sub_issues` returns a list (an empty one is

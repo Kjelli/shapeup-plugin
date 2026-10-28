@@ -27,7 +27,10 @@ Show what you found and ask before every file you write. Go one step at a time.
    operator to confirm. If it isn't supported yet, say so as in step 2 and stop.
 4. **Fields.** Read both adapters' "Configuration" sections and ask for each field, suggesting values from `origin`
    where the adapter says how. If an adapter offers modes (for example how the shaper approves pull requests), explain
-   them and ask which one. Then ask about `mainBranch` (suggest the remote's default branch) and about
+   them and ask which one. If an adapter supports an agent account ("Acting as"), ask whether the agent has its own
+   account and which login; it is the same for both adapters when they use the same service. The plugin's scripts
+   folder is `${CLAUDE_PLUGIN_ROOT}/scripts`. Then ask about `mainBranch` (suggest the remote's default branch) and
+   about
    `worktree.symlink` and `worktree.neverLink`: files or folders the app needs to run that aren't in git, and local
    state a worktree must never touch. Look at `.gitignore` to make suggestions, but let the operator decide.
 5. **Connection.** Check the connection each adapter's "Connection" section describes.
@@ -46,9 +49,14 @@ Show what you found and ask before every file you write. Go one step at a time.
 7. **One-time setup.** If the tracker adapter's "One-time setup" lists anything that is missing, show exactly what
    you would create and create it after an explicit yes.
 8. **Write the configuration.** Show the full `.claude/shapeup.json` and write it after an explicit yes.
-9. **Definition of done.** `shapeup:build` expects the Definition of done in the repository's root `CLAUDE.md`. If
-   there isn't one, say so and offer to add a short ShapeUp section that names the skills and leaves a Definition of
-   done for the team to fill in. Never write one on the team's behalf.
+9. **Definition of done.** `shapeup:build` holds every slice to the Definition of done in the repository's root
+   `CLAUDE.md`.
+   - **None yet:** offer to shape one together now, following
+     [references/definition-of-done.md](references/definition-of-done.md). It draws on the repository's own build and
+     test commands and on the code host adapter. If the operator declines, say the building skill can't run well
+     without one, and move on.
+   - **One exists:** show it and ask whether to review it the same way. Change only what the operator agrees to.
+   Never write a Definition of done the operator hasn't read and confirmed.
 10. **Wrap up.** List the files you wrote, suggest committing them so everyone who clones the repository gets the
     same setup, and say how to start: `Help me shape a pitch`, or `Continue with bet #<id>`.
 

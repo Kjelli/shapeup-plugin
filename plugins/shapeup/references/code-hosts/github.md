@@ -6,12 +6,13 @@ git remote `origin`; below, `<o>/<r>` is its owner and name.
 ## Configuration
 
 ```json
-"codeHost": { "type": "github", "approval": "review" }
+"codeHost": { "type": "github", "account": "myapp-bot", "approval": "review" }
 ```
 
 | Field | Required | Meaning |
 |---|---|---|
-| `approval` | Yes | How the shaper approves a pull request: `review` or `comment`. See "Approval". |
+| `account` | No | The GitHub login of the agent's own account. See "Acting as". When the tracker is also GitHub, it is the same as `tracker.account`. |
+| `approval` | Yes | How the shaper approves a pull request: `review` or `comment`. See "Approval". `review` needs `account`. |
 
 `shapeup:init` recognizes GitHub from a remote like `https://github.com/<owner>/<repo>.git` or
 `git@github.com:<owner>/<repo>.git`.
@@ -20,7 +21,7 @@ git remote `origin`; below, `<o>/<r>` is its owner and name.
 lets the author of a pull request approve it.
 
 - **`review`** (recommended): the agent works under its own GitHub account (a machine account with write access to the
-  repository), and the shaper approves with a normal review. Choose this whenever the agent's account isn't a shaper's.
+  repository, set as `account`), and the shaper approves with a normal review.
 - **`comment`**: for when the agent has to use a shaper's own account, for example a solo project. The shaper approves
   by commenting `/approve`. This relies on the agent never posting that comment itself, which the building skill
   forbids, but GitHub can't enforce it.
@@ -30,6 +31,19 @@ lets the author of a pull request approve it.
 The GitHub CLI, `gh`, as in the GitHub tracker adapter ([../trackers/github.md](../trackers/github.md)): installed,
 signed in with `gh auth login`, and `gh auth setup-git` run so `git push` works without prompting. Pass
 `--repo <o>/<r>` to every `gh pr` command, and pass bodies with `--body-file`.
+
+## Acting as
+
+With `account` set, the building agent puts the plugin's wrapper before every `gh` command **and every `git commit`,
+`git push`, `git fetch` and `git ls-remote`**: `bash <scripts>/as-github-agent <account> git push ...`. For that one
+command the wrapper makes gh use the agent's token, makes git authenticate to `https://github.com` with it (other hosts
+keep the user's own credentials), and makes the agent the commit's author and committer, with its GitHub noreply
+address. Nothing is changed in the user's gh or git configuration.
+
+The wrapper only works with an HTTPS remote. With an SSH remote (`git@github.com:...`), `git push` would use the user's
+own SSH key.
+
+Without `account`, everything runs plainly as the active gh account and the user's git identity.
 
 ## Pull requests
 
@@ -86,6 +100,14 @@ Merge through the API, not `gh pr merge`, which changes branches in the local ch
 Pass `-f sha=<headRefOid>` from the last read so the merge fails if the branch moved since. If the repository doesn't
 allow a merge method, the call is refused: don't use another method.
 
+## Definition of done
+
+Suggest only when the repository has workflows in `.github/workflows/` that run on pull requests:
+
+- **The pull request's checks pass.** Every GitHub Actions check on the pull request is green before it is published
+  or merged. Read them with `gh pr checks <n> --repo <o>/<r>`. A failing check is fixed, never re-run until it passes
+  by luck.
+
 ## Verification
 
 1. `gh api repos/<o>/<r> --jq '{visibility, allow_merge_commit, allow_squash_merge, delete_branch_on_merge}'`:
@@ -95,7 +117,10 @@ allow a merge method, the call is refused: don't use another method.
      *Automatically delete head branches*.
    - If `visibility` is `private`, warn that draft pull requests need a paid plan, and that the `WIP:` fallback is used
      otherwise.
-2. With `approval: review`: compare `gh api user --jq .login` with the people likely to shape bets (ask the operator).
-   If the agent's account is one of them, warn that they can't approve the agent's pull requests and suggest
-   `comment` or a separate account.
-3. `git ls-remote origin` works without prompting.
+2. With `approval: review`, `account` must be set and must not be one of the people who shape bets (ask the
+   operator). Otherwise they can't approve the agent's pull requests: suggest a separate account or `comment`.
+3. With `account` set: `origin` is an HTTPS URL; the wrapper's `gh api repos/<o>/<r> --jq .permissions.push` is
+   `true`; and `bash <scripts>/as-github-agent <account> git ls-remote origin` works without prompting. If `origin` is
+   SSH, suggest switching it to HTTPS, or keeping SSH for fetching and setting an HTTPS push URL:
+   `git remote set-url --push origin https://github.com/<o>/<r>.git`. The operator decides.
+4. Without `account`: `git ls-remote origin` works without prompting.

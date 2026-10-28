@@ -21,7 +21,10 @@ Do this before anything else, every session:
    `${CLAUDE_PLUGIN_ROOT}/references/code-hosts/<codeHost.type>.md`. Wherever this skill says cycle, bet, slice,
    question, scope, state, tag, comment, assignee or pull request, do exactly what the adapters say it is and use the
    tools or commands they name.
-3. **Check the connection** the adapters' "Connection" sections describe. If it doesn't work, tell the operator to
+3. **Act as the agent.** If an adapter's "Acting as" section gives a command prefix for the building agent, put it
+   before every command it lists, for the whole session. The plugin's scripts folder is
+   `${CLAUDE_PLUGIN_ROOT}/scripts`.
+4. **Check the connection** the adapters' "Connection" sections describe. If it doesn't work, tell the operator to
    run `/shapeup:init` and stop.
 
 Read these when you need them:

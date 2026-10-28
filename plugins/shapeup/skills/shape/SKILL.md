@@ -20,7 +20,9 @@ The walk-through needs no tracker, so start it right away. Before posting the be
    finished pitch in the conversation so it isn't lost.
 2. **Read the tracker adapter**, `${CLAUDE_PLUGIN_ROOT}/references/trackers/<tracker.type>.md`. Wherever this skill
    says cycle, bet, scope, state, assignee or description, do exactly what the adapter says and use the tools or commands it names.
-3. **Check the connection** the adapter's "Connection" section describes. If it doesn't work, tell the product owner
+3. **Act as the product owner.** Never use an adapter's agent account or command prefix: the product owner creates
+   the bet.
+4. **Check the connection** the adapter's "Connection" section describes. If it doesn't work, tell the product owner
    to run `/shapeup:init`, and keep the finished pitch in the conversation.
 
 ## What a pitch is

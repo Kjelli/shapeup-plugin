@@ -54,6 +54,14 @@ Complete the pull request with these completion options:
 
 If the tools can't set the merge strategy, don't complete it with another one.
 
+## Definition of done
+
+Suggest only when the repository has a pipeline (`azure-pipelines.yml`, or a build validation policy on the target
+branch):
+
+- **The pull request's checks pass.** Build validation and every other branch policy on the pull request succeed
+  before it is published or merged. A failing build is fixed, never queued again until it passes by luck.
+
 ## Verification
 
 1. The `ado` repository tools can read the repository behind `origin`.
