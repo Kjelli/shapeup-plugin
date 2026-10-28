@@ -1,7 +1,7 @@
 {
   "name": "shapeup",
   "displayName": "ShapeUp",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Run ShapeUp with agents: shape pitches with a product owner and build bets autonomously, one session at a time. Works with the tracker and code host the project is configured for.",
   "author": {
     "name": "Kjell Arne Hellum"

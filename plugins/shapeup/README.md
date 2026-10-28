@@ -23,8 +23,8 @@ number of people and agents can work at the same time, as long as each bet has o
   `downhill`, and records every judgment call as a `DECISION` comment.
 - Each slice has a branch and one pull request into the bet branch, `bet/<id>`. When every slice is merged or cut, the
   agent opens one bet pull request to the main branch.
-- **Humans approve, agents merge.** The agent never approves its own work and never merges without the shaper's
-  approval.
+- **Humans approve, agents merge.** The agent never approves its own work and never merges without a teammate's
+  approval, usually the shaper's. A teammate can also merge a pull request themselves.
 - `Session N of M started` / `ended` comments on the bet act as a lock. When the appetite is spent before the bet pull
   request is open, the agent posts a `CIRCUIT BREAKER` comment instead.
 
@@ -55,8 +55,16 @@ The agent acts as the signed-in user and can never do more than they can.
 
 ### On GitHub
 
-GitHub doesn't let anyone approve their own pull request, so give the agent its own GitHub account: a machine account
-with write access to the repository. Shapers then approve with normal reviews.
+GitHub doesn't let anyone approve their own pull request. The building agent can act as its own GitHub account or as
+the operator's:
+
+- **The operator's account:** teammates approve its pull requests with a normal review, or the operator merges them
+  themselves. Rulesets that allow only merge commits into `bet/**` and only squash into the main branch keep a manual
+  merge from picking the wrong type.
+- **Its own account:** a machine account with write access to the repository. Anyone, the operator included, can
+  approve its pull requests with a normal review.
+
+To give the agent its own account:
 
 1. Install the GitHub CLI and sign in with **your own** account: `gh auth login`.
 2. Sign in the agent's account too, then switch back to yours:
@@ -70,11 +78,8 @@ with write access to the repository. Shapers then approve with normal reviews.
    token for its own commands only, through the plugin's `as-github-agent` wrapper. Its commits are authored by the
    agent's account and pushed with its token. Your git identity and credentials aren't touched.
 3. Use an HTTPS remote (or an HTTPS push URL), so pushes can use the agent's token.
-4. Make sure the repository has issues turned on, allows both merge commits and squash merges, and has
-   *Automatically delete head branches* turned off.
-5. Create at least one open milestone: the first cycle.
-6. Run `/shapeup:init` and give the agent's login when asked. It checks all of the above and creates the labels the
-   skills use.
 
-Shaping always runs as you, so bets are created and assigned by the product owner. On a solo project without a second
-account, configure `"approval": "comment"` and approve by commenting `/approve`.
+Either way, the repository needs issues turned on, both merge commits and squash merges allowed, *Automatically delete
+head branches* turned off, and at least one open milestone as the first cycle. `/shapeup:init` asks which account the
+agent acts as, checks the rest, and creates the labels the skills use. Shaping always runs as the operator, so bets are
+created by the product owner.

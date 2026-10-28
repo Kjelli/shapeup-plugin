@@ -6,25 +6,26 @@ git remote `origin`; below, `<o>/<r>` is its owner and name.
 ## Configuration
 
 ```json
-"codeHost": { "type": "github", "account": "myapp-bot", "approval": "review" }
+"codeHost": { "type": "github", "account": "myapp-bot" }
 ```
 
 | Field | Required | Meaning |
 |---|---|---|
-| `account` | No | The GitHub login of the agent's own account. See "Acting as". When the tracker is also GitHub, it is the same as `tracker.account`. |
-| `approval` | Yes | How the shaper approves a pull request: `review` or `comment`. See "Approval". `review` needs `account`. |
+| `account` | No | The GitHub login the building agent acts as, when it has its own account. See "Acting as". When the tracker is also GitHub, it is the same as `tracker.account`. Without it, the agent acts as the operator's active gh account. |
 
 `shapeup:init` recognizes GitHub from a remote like `https://github.com/<owner>/<repo>.git` or
 `git@github.com:<owner>/<repo>.git`.
 
-**Choosing the approval mode.** The agent opens pull requests as the account `gh` is signed in as, and GitHub never
-lets the author of a pull request approve it.
+**Asking who the agent acts as.** `gh auth status --hostname github.com` lists every account gh has a token for and
+marks the active one, which is the operator's. Ask "Which GitHub account should the building agent act as?",
+offering:
 
-- **`review`** (recommended): the agent works under its own GitHub account (a machine account with write access to the
-  repository, set as `account`), and the shaper approves with a normal review.
-- **`comment`**: for when the agent has to use a shaper's own account, for example a solo project. The shaper approves
-  by commenting `/approve`. This relies on the agent never posting that comment itself, which the building skill
-  forbids, but GitHub can't enforce it.
+- **Each other stored account** by login, described as: "A separate account for the agent. Anyone on the team,
+  including you, can approve its pull requests with a normal review." Sets `account`.
+- **The operator's own account** by login, described as: "The agent works as you. GitHub won't let you review pull
+  requests opened under your own account, so a teammate approves them, or you merge them yourself." No `account`.
+- **"An agent account that isn't signed in yet"**: tell the operator to run `gh auth login` as that account, then
+  `gh auth switch --user <their own login>`, and to run `/shapeup:init` again. Stop there.
 
 ## Connection
 
@@ -69,24 +70,21 @@ titled `WIP: ...`.
 
 ## Approval
 
-Read the reviews and comments with `gh pr view --json reviews,comments,commits`. Only the shaper counts, as defined by
-the tracker; anything by another account, including the agent's own, is ignored.
+Read the reviews with `gh pr view <n> --repo <o>/<r> --json state,reviews,mergedAt,mergedBy,commits`. Ignore reviews by
+the account the agent acts as: the agent never reviews, and GitHub doesn't let that account approve anyway.
 
-**`approval: review`**
-
-- Approved when the shaper's most recent review with state `APPROVED` or `CHANGES_REQUESTED` is `APPROVED`. Reviews with
-  state `COMMENTED` or `DISMISSED` don't count either way.
+- **Approved** when, taking each reviewer's most recent review with state `APPROVED` or `CHANGES_REQUESTED`, at least
+  one is `APPROVED` and none is `CHANGES_REQUESTED`. Reviews with state `COMMENTED` or `DISMISSED` don't count either
+  way. Any teammate's review counts; the shaper usually reviews.
 - An `APPROVED` review with a body or line comments is approval with suggestions: apply or answer them first.
 - If the repository's branch protection dismisses stale approvals, a push turns an approval into `DISMISSED`: wait for a
   new one.
-
-**`approval: comment`**
-
-- Approved when the shaper has a pull request comment whose first line is exactly `/approve`, posted after the newest
-  commit on the pull request, and has posted no review with state `CHANGES_REQUESTED` and no unresolved review thread
-  since. A push after the comment cancels it.
-- Any other text after `/approve` on the same comment is a suggestion: apply or answer it first.
-- Never post `/approve`, or anything starting with it, yourself.
+- **Merged by a person:** `state` is `MERGED` and you didn't merge it. That counts as approval; handle it as the
+  building skill describes.
+- **The agent works under the operator's account** (no `account`): the operator can't review these pull requests.
+  Teammates review them as usual, or the operator merges them. When you open or publish a pull request in this setup,
+  end its description with: "Opened under your own account, so GitHub won't let you review it: ask a teammate to
+  approve it, or merge it yourself (merge commit for a slice, squash for the bet)."
 
 ## Merging
 
@@ -108,6 +106,10 @@ Suggest only when the repository has workflows in `.github/workflows/` that run 
   or merged. Read them with `gh pr checks <n> --repo <o>/<r>`. A failing check is fixed, never re-run until it passes
   by luck.
 
+## One-time setup
+
+None.
+
 ## Verification
 
 1. `gh api repos/<o>/<r> --jq '{visibility, allow_merge_commit, allow_squash_merge, delete_branch_on_merge}'`:
@@ -117,8 +119,10 @@ Suggest only when the repository has workflows in `.github/workflows/` that run 
      *Automatically delete head branches*.
    - If `visibility` is `private`, warn that draft pull requests need a paid plan, and that the `WIP:` fallback is used
      otherwise.
-2. With `approval: review`, `account` must be set and must not be one of the people who shape bets (ask the
-   operator). Otherwise they can't approve the agent's pull requests: suggest a separate account or `comment`.
+2. Recommend, without requiring, rulesets that offer only the right merge type, so a person merging by hand can't
+   pick the wrong one: `bet/**` branches allow only merge commits, and the main branch allows only squash. Check with
+   `gh api repos/<o>/<r>/rulesets` and each ruleset's `pull_request` rule (`allowed_merge_methods`). If they are
+   missing, say how to add them under *Settings > Rules > Rulesets*. Changing settings is for the operator.
 3. With `account` set: `origin` is an HTTPS URL; the wrapper's `gh api repos/<o>/<r> --jq .permissions.push` is
    `true`; and `bash <scripts>/as-github-agent <account> git ls-remote origin` works without prompting. If `origin` is
    SSH, suggest switching it to HTTPS, or keeping SSH for fetching and setting an HTTPS push URL:

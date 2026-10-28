@@ -85,12 +85,15 @@ Other bets are merged into the main branch while you work, so drift happens at t
 
 You complete pull requests, but only approved ones.
 
-- **Approved** means approved by the shaper, exactly as the code host adapter's "Approval" section defines it. Any
-  other verdict, no verdict, or a verdict by anyone else is not approval. If the approval comes with suggestions,
-  apply or answer them first.
-- If pushing new commits resets the approval, wait for the shaper to approve again.
+- **Approved** means approved by a teammate, exactly as the code host adapter's "Approval" section defines it: a
+  person, never the agent. Any other verdict or no verdict is not approval, and one teammate's request for changes
+  outweighs another's approval. If the approval comes with suggestions, apply or answer them first.
+- If pushing new commits resets the approval, wait for a new one.
 - Before completing, make sure the branch is up to date and the pull request has no conflicts and no unresolved
-  threads from the shaper.
+  review threads.
+- **Merged by a teammate:** someone may merge a pull request themselves instead of approving it. That is approval.
+  Don't redo or revert it, even if they chose a different merge type: close the slice (or post that the bet shipped),
+  delete a slice branch that is still there, and note the merge type in a decision comment if it wasn't the one below.
 - **Slice pull requests:** complete with a regular **merge commit** and delete the source branch. Then set the slice to
   `Closed` with a one-line comment.
 - **The bet pull request:** complete with a **squash merge** and keep the bet branch; it preserves the bet's history.

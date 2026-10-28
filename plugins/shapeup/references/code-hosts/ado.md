@@ -39,8 +39,11 @@ Use the `ado` repository tools (named like `mcp__ado__repo_...`).
 Each reviewer has a vote: `10` *Approved*, `5` *Approved with suggestions*, `0` no vote, `-5` *Waiting for author*,
 `-10` *Rejected*.
 
-- Only the shaper's vote counts. `10` or `5` is approval. Anything else, no vote, or a vote by anyone else is not.
-- With `5`, the suggestions are in the shaper's threads: apply or answer them first.
+- Approved when at least one reviewer votes `10` or `5` and no reviewer votes `-5` or `-10`. Any teammate's vote
+  counts; the shaper usually reviews. The agent never votes, so every vote is a person's, even one cast from the
+  account the agent works under.
+- With `5`, the suggestions are in that reviewer's threads: apply or answer them first.
+- **Merged by a person:** the pull request's status is `completed` and you didn't complete it. That counts as approval.
 - The repository's branch policies may reset votes when new commits are pushed. Read the vote again after pushing.
 
 ## Merging

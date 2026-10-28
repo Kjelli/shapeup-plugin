@@ -96,8 +96,9 @@ The tracker may also hold production work, and other teams and agents work on ot
   `downhill`, `nice-to-have`, `question` and the ones the tracker adapter uses for states.
 - Branches and pull requests only in `origin`. Never push directly to the main branch or to the bet branch (creating
   the bet branch from the main branch is the exception). Never touch another bet's branches or pull requests.
-- **Approval is the shaper's decision; merging is your job.** Never vote on, approve, reject or abandon a pull request.
-  Complete one only after the shaper has approved it, as the code host adapter defines approval.
+- **Approval is the team's decision; merging is your job.** Never vote on, approve, reject or abandon a pull request.
+  Complete one only after a teammate has approved it, as the code host adapter defines approval. The shaper usually
+  reviews, but any teammate may. If a teammate merges a pull request themselves, that counts as approval too.
 - Never delete items. Close an item that is cut or merged into another, with a comment explaining why.
 - If something outside the boundary needs to change, raise a question.
 
@@ -118,13 +119,13 @@ These are logical states; the tracker adapter maps each to the tracker's own.
 2. **Check the lock.** If the latest session comment on the bet is a `started` without a matching `ended`, another
    session may be running. Stop and tell the operator. Continue only if they explicitly tell you to take over; then
    post `Session N taken over` and carry on as that session.
-3. **Ship if approved.** If the bet is `Resolved` and the shaper has approved the bet pull request, ship it (see
-   "Shipping") and stop, without session comments.
+3. **Ship if approved.** If the bet is `Resolved` and the bet pull request is approved, ship it (see "Shipping") and
+   stop, without session comments. If a teammate has already merged it, only post the shipped comment and stop.
 4. **Check the appetite.** Count earlier `Session ... started` comments to find this session's number N, and read the
    appetite M from the pitch. If N > M, the appetite is spent: if the bet is `Active` and has no `CIRCUIT BREAKER`
    comment yet, post one (see "Circuit breaker"). Then stop, without session comments.
 5. **Check for a waiting bet.** If the bet is `Resolved` and its bet pull request has no review comments, say it is
-   waiting for the shaper's review and stop, without session comments. If it has review comments, this session
+   waiting for review and stop, without session comments. If it has review comments, this session
    addresses them: make the changes in a slice (new or reopened) and its pull request into the bet branch, as with any
    slice, and reply in the bet pull request's threads with what you changed.
 6. **Post `Session N of M started`.** If the bet is `New`, set it to `Active`.
@@ -136,9 +137,9 @@ These are logical states; the tracker adapter maps each to the tracker's own.
    (see "Worktree" in [references/git-and-prs.md](references/git-and-prs.md)). Do all git work there.
 10. **Read answers.** Act on answers the shaper has added to questions. For a question still unanswered from an
     earlier session, adopt your default, post a decision comment saying so, and close the question.
-11. **Handle pull requests** linked to slices. Approved by the shaper: merge it and close the slice. Review comments or
-    rejected: address them on the same branch before any new work, and reply in the thread with what you changed.
-    No response yet: leave it.
+11. **Handle pull requests** linked to slices. Approved: merge it and close the slice. Already merged by a teammate:
+    close the slice and delete its branch if it is still there. Review comments or rejected: address them on the same
+    branch before any new work, and reply in the thread with what you changed. No response yet: leave it.
 12. **Sync branches.** Bring the latest main branch into the bet branch, and the bet branch into every `Active`
     slice's branch.
 13. Compare sessions used and sessions left before deciding what to do next.
@@ -220,11 +221,11 @@ When every slice is `Closed` or cut and the result matches what the pitch descri
    most important decision comments.
 3. Set the bet to `Resolved` and comment that it is ready to ship.
 
-Whether it ships is the shaper's call: they approve the bet pull request.
+Whether it ships is the team's call, usually the shaper's: someone approves the bet pull request, or merges it.
 
 ## Shipping
 
-When the shaper has approved the bet pull request, complete it as described in "Merging" in
+When the bet pull request is approved, complete it as described in "Merging" in
 [references/git-and-prs.md](references/git-and-prs.md): a squash merge, keeping the bet branch. Then post one comment on
 the bet that it has shipped. The bet stays `Resolved`; humans close it.
 

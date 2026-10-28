@@ -40,10 +40,10 @@ And the **fallback** when drafts aren't supported.
 
 ### Approval
 
-Exactly which reviewer verdicts count as the shaper's approval, which don't, whether new commits reset it, and how
-to recognize suggestions that come with an approval. If the host offers more than one way to approve (for example
-because a host forbids approving your own pull request), the adapter lists them as modes and the configuration picks
-one.
+Exactly which reviewer verdicts count as a teammate's approval, which don't, whether new commits reset it, and how
+to recognize suggestions that come with an approval. Also how to tell that a person merged a pull request
+themselves, and what that means when the agent works under a person's own account (for example a host that forbids
+approving your own pull request).
 
 ### Merging
 
@@ -58,6 +58,11 @@ And what to do if the tools can't do one of these.
 
 Optional. Items `shapeup:init` suggests for the Definition of done because of how this host works, such as checks
 that run on every pull request, and what in the repository shows they apply.
+
+### One-time setup
+
+Optional. Anything that must exist on the host before the skills can run and that `shapeup:init` may create after the
+operator confirms, such as a label. Write "None" if there is nothing.
 
 ### Verification
 
