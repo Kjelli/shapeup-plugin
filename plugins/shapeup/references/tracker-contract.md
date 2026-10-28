@@ -19,8 +19,8 @@ suggest them (for example from the git remote).
 
 ### Connection
 
-The MCP server the adapter uses: an `.mcp.json` entry `shapeup:init` can write, how the user signs in, and how to
-tell from the session's tool list that the server is connected.
+What the agent uses to reach the tracker: an MCP server (with the `.mcp.json` entry `shapeup:init` can write) or a
+command-line tool. Also what the user installs and how they sign in, and how to tell that the connection works.
 
 ### Scope
 
@@ -31,12 +31,12 @@ area path, a project board, a label), and which fields every created item gets s
 
 | Concept | Required |
 |---|---|
-| **Cycle** | A container whose children are bets. Created and closed by humans. |
-| **Bet** | An item in scope whose parent is a cycle. Its description holds the pitch. Has an assignee (the shaper) and a creator. |
+| **Cycle** | A container that holds bets, either as their parent or through a field on the bet. Created and closed by humans. |
+| **Bet** | An item in scope that belongs to a cycle. Its description holds the pitch. Has an assignee (the shaper) and a creator. |
 | **Slice** | An item in scope, child of a bet. |
 | **Question** | An item in scope, child of a bet or of one of its slices. Can be assigned to the shaper. |
 
-For each: the tracker's item type, how parent and child are linked, how its ID is written, and its web link.
+For each: the tracker's item type, how it is linked to its parent or cycle, how its ID is written, and its web link.
 
 ### States
 
@@ -71,14 +71,19 @@ The format a description takes (Markdown or HTML) and how to write the pitch int
 How to:
 
 - List open cycles in scope.
-- Read one bet by ID, with parent, state, assignee, creator and description.
-- Find bets by title: bets in scope whose parent is a cycle and whose state is `New`, `Active` or `Resolved`.
+- Read one bet by ID, with its cycle, state, assignee, creator and description.
+- Find bets by title: bets in scope that belong to a cycle and whose state is `New`, `Active` or `Resolved`.
 - Read every descendant of a bet in scope, with tags, states and recent comments.
 
 ### Changes the skills make
 
 How to create a bet, a slice and a question with every required field, change a state, set the assignee, and link a
 pull request to an item.
+
+### One-time setup
+
+Anything that must exist in the tracker before the skills can run and that `shapeup:init` may create after the
+operator confirms, such as labels. Write "None" if there is nothing. Never cycles: those are always created by humans.
 
 ### Off-limits
 

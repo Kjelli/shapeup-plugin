@@ -53,3 +53,8 @@ Complete the pull request with these completion options:
 | Bet | `squash` | No |
 
 If the tools can't set the merge strategy, don't complete it with another one.
+
+## Verification
+
+1. The `ado` repository tools can read the repository behind `origin`.
+2. `git ls-remote origin` works without prompting.

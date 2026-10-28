@@ -126,6 +126,10 @@ and `[System.TeamProject] = '<project>'`.
 - **Pull request link:** add an artifact link of type *Pull Request* from the work item to the pull request (the
   code host adapter says how when the pull request is in Azure Repos).
 
+## One-time setup
+
+None. Tags are created when first used.
+
 ## Off-limits
 
 Never create or change sprints, iterations, area paths, teams, queries (shared or personal), dashboards or boards

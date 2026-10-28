@@ -20,8 +20,8 @@ Do this before anything else, every session:
 2. **Read both adapters:** `${CLAUDE_PLUGIN_ROOT}/references/trackers/<tracker.type>.md` and
    `${CLAUDE_PLUGIN_ROOT}/references/code-hosts/<codeHost.type>.md`. Wherever this skill says cycle, bet, slice,
    question, scope, state, tag, comment, assignee or pull request, do exactly what the adapters say it is and use the
-   tools they name.
-3. **Check the connection.** If the tools the adapters name aren't available in this session, tell the operator to
+   tools or commands they name.
+3. **Check the connection** the adapters' "Connection" sections describe. If it doesn't work, tell the operator to
    run `/shapeup:init` and stop.
 
 Read these when you need them:
@@ -37,8 +37,8 @@ The repository's root `CLAUDE.md` holds the Definition of done. Every slice meet
 
 | Term | Meaning |
 |---|---|
-| **Cycle** | A container in scope whose children are its bets. |
-| **Bet** | An item in scope whose parent is a cycle. Its description is the **pitch**: problem, appetite, solution, rabbit holes, no-gos. Always a business outcome, never a technical task (see "What a bet is"). |
+| **Cycle** | A container in scope that holds the bets of one cycle. |
+| **Bet** | An item in scope that belongs to a cycle. Its description is the **pitch**: problem, appetite, solution, rabbit holes, no-gos. Always a business outcome, never a technical task (see "What a bet is"). |
 | **Appetite** | How many sessions the bet is worth, stated in the pitch. A fixed budget, not an estimate. |
 | **Shaper** | The bet's assignee; if none, its creator. |
 | **Slice** | A meaningful part of the bet that can be finished on its own. A child of the bet. |
@@ -71,13 +71,13 @@ away, not how it is built. "Change framework" or "Optimize write speeds" is neve
 The operator names the bet by ID or by name.
 
 - **A number** (`#1958`, `1958`): read that item.
-- **A name:** search bets in scope whose parent is a cycle and whose state is `New`, `Active` or `Resolved`. A single
+- **A name:** search bets in scope that belong to a cycle and whose state is `New`, `Active` or `Resolved`. A single
   case-insensitive exact title match wins. Otherwise, a single title containing the name wins. If several match, or none, list the closest candidates (ID, title, state, cycle) and ask the
   operator to choose.
 - **Nothing given:** ask for an ID or a name.
 
-Never pick a bet yourself. The bet must be a bet as the tracker adapter defines it, in scope, with a cycle as parent,
-and not `Closed`. If not, stop and say why.
+Never pick a bet yourself. The bet must be a bet as the tracker adapter defines it, in scope, belonging to a
+cycle, and not `Closed`. If not, stop and say why.
 
 ## Boundaries
 
@@ -90,7 +90,7 @@ The tracker may also hold production work, and other teams and agents work on ot
 - Everything else is read-only, including other bets, their descendants and the cycle: never edit, comment on, link
   to, tag, reassign or change the state of them.
 - Never create cycles, anything the tracker adapter lists as off-limits, or tags other than `slice`, `uphill`,
-  `downhill`, `nice-to-have` and `question`.
+  `downhill`, `nice-to-have`, `question` and the ones the tracker adapter uses for states.
 - Branches and pull requests only in `origin`. Never push directly to the main branch or to the bet branch (creating
   the bet branch from the main branch is the exception). Never touch another bet's branches or pull requests.
 - **Approval is the shaper's decision; merging is your job.** Never vote on, approve, reject or abandon a pull request.

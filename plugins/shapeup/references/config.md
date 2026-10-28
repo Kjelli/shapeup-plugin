@@ -38,8 +38,10 @@ those are always read fresh from the tracker.
 
 | Kind | Types |
 |---|---|
-| Tracker | `ado` (Azure DevOps Boards) |
-| Code host | `ado` (Azure Repos) |
+| Tracker | `ado` (Azure DevOps Boards), `github` (GitHub Issues) |
+| Code host | `ado` (Azure Repos), `github` (GitHub) |
+
+Tracker and code host are chosen separately, for example Azure DevOps Boards with code on GitHub.
 
 Adding a backend means writing one adapter file that meets [tracker-contract.md](tracker-contract.md) or
 [code-host-contract.md](code-host-contract.md), and adding it to this table. The skills don't change.

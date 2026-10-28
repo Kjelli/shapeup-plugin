@@ -19,9 +19,9 @@ The walk-through needs no tracker, so start it right away. Before posting the be
    [config.md](${CLAUDE_PLUGIN_ROOT}/references/config.md). If it is missing or incomplete, say so and keep the
    finished pitch in the conversation so it isn't lost.
 2. **Read the tracker adapter**, `${CLAUDE_PLUGIN_ROOT}/references/trackers/<tracker.type>.md`. Wherever this skill
-   says cycle, bet, scope, state, assignee or description, do exactly what the adapter says and use the tools it names.
-3. **Check the connection.** If the adapter's tools aren't available in this session, tell the product owner to run
-   `/shapeup:init`, and keep the finished pitch in the conversation.
+   says cycle, bet, scope, state, assignee or description, do exactly what the adapter says and use the tools or commands it names.
+3. **Check the connection** the adapter's "Connection" section describes. If it doesn't work, tell the product owner
+   to run `/shapeup:init`, and keep the finished pitch in the conversation.
 
 ## What a pitch is
 
@@ -62,12 +62,12 @@ Bets live in the tracker's scope, as the tracker adapter defines it.
 3. **Check for duplicates.** If a bet with the same or a very similar title already exists in scope, show it and ask
    whether to go on. Compare titles without their `Bet: ` prefix.
 4. **Confirm.** Show exactly what will be created: a bet titled `Bet: <pitch title>` (always this prefix, never asked
-   about), child of the chosen cycle, with the scope fields the adapter lists, state `New`, assigned to the product
+   about), in the chosen cycle, with the scope fields the adapter lists, state `New`, assigned to the product
    owner (the signed-in user unless they name someone else), with the pitch as its description. Create it only after
    an explicit yes.
 5. **Create it.** Put the pitch in the description without its title heading, keeping the section headings, in the
-   format the adapter's "Descriptions" section gives. Link it to the cycle as its parent.
-6. **Read it back.** Check the title, parent, scope fields, state, assignee and every section of the description. Fix
+   format the adapter's "Descriptions" section gives. Put it in the cycle the way the adapter says.
+6. **Read it back.** Check the title, cycle, scope fields, state, assignee and every section of the description. Fix
    anything wrong on the new bet, then give its ID and link, and tell the product owner it can be built with
    `Continue with bet #<id>`.
 
