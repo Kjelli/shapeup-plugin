@@ -42,13 +42,28 @@ interpretation and is not affiliated with or endorsed by Basecamp or 37signals.
 | Circuit breaker | When the sessions run out before the bet is finished, the agent posts `CIRCUIT BREAKER` and stops. |
 | Cool-down | Work the agent notices but the bet doesn't need is listed under `Outside this bet:`, not done. |
 
-## Requirements
+## Compatibility
 
-- [Claude Code](https://code.claude.com).
-- **GitHub:** the [GitHub CLI](https://cli.github.com) (`gh`), signed in.
-- **Azure DevOps:** Node.js 20 or later for the [Azure DevOps MCP server](https://github.com/microsoft/azure-devops-mcp),
-  and `git push` to Azure Repos working without a prompt (for example with Git Credential Manager).
-- A **Definition of done** in your repository's `CLAUDE.md`. `/shapeup:init` helps you write one.
+You need [Claude Code](https://code.claude.com), plus one tracker and one code host from the lists below. They are
+chosen separately, so any combination works, for example GitHub Issues with code on GitHub, or Azure DevOps Boards with
+code on GitHub.
+
+**Trackers** (where cycles, bets, slices and questions live):
+
+| Tracker | Connects through |
+|---|---|
+| GitHub Issues | The [GitHub CLI](https://cli.github.com) (`gh`), signed in |
+| Azure DevOps Boards | The [Azure DevOps MCP server](https://github.com/microsoft/azure-devops-mcp) (needs Node.js 20 or later) |
+
+**Code hosts** (where branches and pull requests live):
+
+| Code host | Connects through |
+|---|---|
+| GitHub | The GitHub CLI (`gh`), signed in |
+| Azure Repos | The Azure DevOps MCP server |
+
+`git push` to the code host has to work without a prompt: on GitHub, `gh auth setup-git` takes care of that. Missing
+your tracker? See [Adding a tracker or code host](#adding-a-tracker-or-code-host).
 
 ## Install
 
