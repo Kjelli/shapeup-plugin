@@ -9,11 +9,11 @@ A plugin marketplace for Claude Code. It holds one plugin so far:
 ## Install
 
 ```bash
-claude plugin marketplace add <owner>/shapeup-plugin
+claude plugin marketplace add kjelli/shapeup-plugin
 claude plugin install shapeup@shapeup-plugin
 ```
 
-Or, inside a session, `/plugin marketplace add <owner>/shapeup-plugin` and `/plugin install shapeup@shapeup-plugin`.
+Or, inside a session, `/plugin marketplace add kjelli/shapeup-plugin` and `/plugin install shapeup@shapeup-plugin`.
 
 To have everyone who clones a project offered the plugin, commit this to the project's `.claude/settings.json`:
 
@@ -21,7 +21,7 @@ To have everyone who clones a project offered the plugin, commit this to the pro
 {
   "extraKnownMarketplaces": {
     "shapeup-plugin": {
-      "source": { "source": "github", "repo": "<owner>/shapeup-plugin" }
+      "source": { "source": "github", "repo": "kjelli/shapeup-plugin" }
     }
   },
   "enabledPlugins": {
